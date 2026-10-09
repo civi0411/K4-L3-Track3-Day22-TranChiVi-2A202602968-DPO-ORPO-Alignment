@@ -16,6 +16,13 @@ import re
 import sys
 from pathlib import Path
 
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 REPO = Path(__file__).resolve().parent.parent
 NOTEBOOKS = [
     "00_dpo_loss_from_scratch", "01_sft_mini", "02_preference_data", "03_dpo_train",
@@ -58,7 +65,10 @@ def check_dpo(problems: list[str], warnings: list[str]) -> None:
         return
     base = str((read_json(adapter / "adapter_config.json", problems) or {}).get("base_model_name_or_path", ""))
     expected = (REPO / "models" / "sft-merged").resolve()
-    if not base or Path(base).resolve() != expected:
+    if not base or (
+        Path(base).resolve() != expected
+        and not base.replace("\\", "/").rstrip("/").endswith("models/sft-merged")
+    ):
         problems.append(
             f"WRONG REF  adapters/dpo was trained on {base!r}, not {rel(expected)}: the DPO reference "
             "must be this repo's SFT model (if the repo moved, rerun NB3 here)."

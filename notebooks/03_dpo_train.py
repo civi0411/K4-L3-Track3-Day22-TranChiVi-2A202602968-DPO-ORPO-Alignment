@@ -7,6 +7,10 @@
 # %% [markdown]
 # # NB3 — Huấn luyện DPO (notebook chính)
 #
+# **Học viên:** Trần Chí Vĩ  
+# **Mã học viên:** 2A202602968  
+# **Khoá:** VinUni AICB Track 3 (K4) — Day 22 DPO/ORPO Alignment  
+#
 # **Công nghệ:** TRL 1.13 `DPOTrainer`, LoRA mới trên mô hình SFT đã gộp, β=0.1, lr=5e-6.
 #
 # > **Mục tiêu:** huấn luyện adapter DPO, vẽ **riêng** hai đường `rewards/chosen` và

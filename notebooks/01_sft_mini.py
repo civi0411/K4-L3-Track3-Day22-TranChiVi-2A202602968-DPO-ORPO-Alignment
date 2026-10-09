@@ -7,6 +7,10 @@
 # %% [markdown]
 # # NB1 — SFT-mini: mô hình SFT tiếng Việt (checkpoint) làm điểm xuất phát cho DPO
 #
+# **Học viên:** Trần Chí Vĩ  
+# **Mã học viên:** 2A202602968  
+# **Khoá:** VinUni AICB Track 3 (K4) — Day 22 DPO/ORPO Alignment  
+#
 # **Công nghệ:** Unsloth + LoRA r=16 trên Qwen3-4B-Instruct-2507 (4-bit) + 1k VN Alpaca, 1 epoch.
 #
 # > **Mục tiêu:** tạo mô hình SFT để DPO align tiếp. Notebook lưu hai thứ:

@@ -7,6 +7,10 @@
 # %% [markdown]
 # # NB6 — Đánh giá chuẩn (benchmark) SFT vs SFT+DPO bằng lm-eval (TUỲ CHỌN, thưởng điểm)
 #
+# **Học viên:** Trần Chí Vĩ  
+# **Mã học viên:** 2A202602968  
+# **Khoá:** VinUni AICB Track 3 (K4) — Day 22 DPO/ORPO Alignment  
+#
 # **Công nghệ:** `lm-eval` 0.4.13 trên mô hình 16-bit: `models/sft-merged` (SFT) và
 # `models/sft-merged` + `peft=adapters/dpo` (SFT+DPO).
 #

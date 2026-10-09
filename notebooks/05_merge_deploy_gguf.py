@@ -7,6 +7,10 @@
 # %% [markdown]
 # # NB5 — Gộp SFT+DPO → GGUF Q4_K_M (TUỲ CHỌN, thưởng điểm)
 #
+# **Học viên:** Trần Chí Vĩ  
+# **Mã học viên:** 2A202602968  
+# **Khoá:** VinUni AICB Track 3 (K4) — Day 22 DPO/ORPO Alignment  
+#
 # > Phần lõi của lab = NB0–NB4. Bước này biên dịch llama.cpp lúc chạy (~3–5 phút lần đầu).
 #
 # **Lỗi của lab cũ:** NB5 chỉ nạp adapter **SFT** rồi gộp, nên file GGUF không có DPO.

@@ -7,6 +7,10 @@
 # %% [markdown]
 # # NB2 — Dữ liệu sở thích (preference) tiếng Việt
 #
+# **Học viên:** Trần Chí Vĩ  
+# **Mã học viên:** 2A202602968  
+# **Khoá:** VinUni AICB Track 3 (K4) — Day 22 DPO/ORPO Alignment  
+#
 # **Bộ dữ liệu mặc định:** `sailor2/sea-ultrafeedback-onpolicy`, lọc `language == "Vietnamese"`
 # (khoảng 4.1k cặp). Lab cũ huấn luyện DPO trên UltraFeedback tiếng Anh trong khi SFT và
 # đánh giá đều bằng tiếng Việt, nên khó đọc hiệu ứng của DPO.

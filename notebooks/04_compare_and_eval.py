@@ -7,6 +7,10 @@
 # %% [markdown]
 # # NB4 — So sánh SFT và SFT+DPO
 #
+# **Học viên:** Trần Chí Vĩ  
+# **Mã học viên:** 2A202602968  
+# **Khoá:** VinUni AICB Track 3 (K4) — Day 22 DPO/ORPO Alignment  
+#
 # > **Mục tiêu:** đo xem DPO có thay đổi hành vi không, trên câu hỏi **chưa từng huấn luyện**:
 # > - 8 câu hỏi cố định (4 hữu ích, 4 an toàn) để đọc bằng mắt;
 # > - `JUDGE_PROMPTS` câu hỏi (≥ 50) lấy từ tập eval held-out của NB2.

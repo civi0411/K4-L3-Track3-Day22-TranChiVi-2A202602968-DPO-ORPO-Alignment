@@ -7,6 +7,10 @@
 # %% [markdown]
 # # NB7 — GRPO với reward kiểm chứng được (RLVR) (THƯỞNG, +8)
 #
+# **Học viên:** Trần Chí Vĩ  
+# **Mã học viên:** 2A202602968  
+# **Khoá:** VinUni AICB Track 3 (K4) — Day 22 DPO/ORPO Alignment  
+#
 # DPO học từ *cặp* sở thích có sẵn (ngoại tuyến). GRPO (DeepSeekMath, 2024; dùng trong
 # DeepSeek-R1) sinh **G câu trả lời cho mỗi câu hỏi**, chấm bằng hàm reward, rồi đẩy
 # xác suất các câu có reward cao hơn trung bình nhóm. Không cần mô hình reward hay

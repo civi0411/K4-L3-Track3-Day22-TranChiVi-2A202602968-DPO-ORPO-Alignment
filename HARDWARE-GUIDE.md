@@ -27,11 +27,15 @@ Hai thời điểm bộ nhớ tăng vọt cần lưu ý:
 | Tài nguyên bạn có | Tier | Cách chạy |
 |---|---|---|
 | Colab T4 miễn phí | **T4** | `colab/Lab22_DPO_T4.ipynb` |
-| Kaggle T4×2 | T4 (dùng một GPU) | `colab/Lab22_DPO_T4.ipynb` |
+| Kaggle T4×2 / P100 | **T4** (dùng một GPU) | `kaggle/Lab22_DPO_T4_Kaggle.ipynb` hoặc `colab/Lab22_DPO_T4.ipynb` |
 | Colab Pro L4 / A100 | **BigGPU** | `colab/Lab22_DPO_BigGPU.ipynb` |
 | GPU laptop 12–23 GB | T4 | `setup-laptop.sh` + `make pipeline` |
 | GPU ≥ 24 GB | BigGPU | `COMPUTE_TIER=BIGGPU make pipeline` |
-| Không có GPU | — | NB0 chạy trên CPU; các phần còn lại cần GPU (dùng Colab) |
+| Không có GPU | — | NB0 chạy trên CPU; các phần còn lại cần GPU (dùng Colab / Kaggle) |
+
+Nếu chạy trên Kaggle:
+- **Bắt buộc bật Internet:** Settings → **Internet: On** (để tải thư viện và mô hình từ Hugging Face).
+- **GPU:** Accelerator → **GPU T4 x 2** (hệ thống tự thiết lập `CUDA_VISIBLE_DEVICES=0` do Unsloth yêu cầu single GPU).
 
 Nếu hết bộ nhớ GPU (OOM): giảm `MAX_LEN` (768 → 512), sau đó tăng `gradient_accumulation_steps` trong
 `lab22/config.py`, cuối cùng mới hạ tier.

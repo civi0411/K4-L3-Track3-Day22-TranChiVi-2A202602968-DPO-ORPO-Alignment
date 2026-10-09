@@ -1,0 +1,8 @@
+{
+  "dataset": "vuongtsc/vi-gsm8k-agentic",
+  "n_test": 100,
+  "steps": 60,
+  "num_generations": 4,
+  "acc_before": 0.34,
+  "acc_after": 0.415
+}

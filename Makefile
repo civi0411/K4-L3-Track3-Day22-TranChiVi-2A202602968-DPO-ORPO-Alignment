@@ -10,8 +10,8 @@ JUPYTER  := $(VENV)/bin/jupyter
 
 # If running on Colab there's no venv — fall back to system python.
 ifeq ($(wildcard $(PY)),)
-  PY := python
-  PIP := pip
+  PY := $(shell command -v python3 2>/dev/null || echo python)
+  PIP := $(shell command -v pip3 2>/dev/null || echo pip)
   JUPYTEXT := jupytext
   PYTEST := pytest
   JUPYTER := jupyter
@@ -27,8 +27,10 @@ help: ## Show this help
 # Setup — auto-detect Colab vs laptop
 # ─────────────────────────────────────────────────────────────
 
-setup: ## Auto-detect Colab vs laptop, install deps + smoke check
-	@if [ -d /content ]; then \
+setup: ## Auto-detect Kaggle vs Colab vs laptop, install deps + smoke check
+	@if [ -d /kaggle ]; then \
+	  bash setup-kaggle.sh; \
+	elif [ -d /content ]; then \
 	  bash setup-colab.sh; \
 	else \
 	  bash setup-laptop.sh; \

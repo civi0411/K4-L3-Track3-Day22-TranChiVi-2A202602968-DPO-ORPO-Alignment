@@ -1,5 +1,9 @@
 # Ngày 22 — Lab căn chỉnh mô hình bằng DPO/ORPO (Track 3)
 
+**Học viên:** Trần Chí Vĩ  
+**Mã học viên:** 2A202602968  
+**Khoá đào tạo:** VinUni AICB Track 3 (K4) — Phase 2 Lab 22  
+
 Lab cho học phần **AICB-P2T3 · Ngày 22 · DPO/ORPO Alignment — từ SFT đến học theo sở thích**.
 
 > Bản K4 cập nhật tháng 10/2026 (xem [`CHANGELOG.md`](CHANGELOG.md)). Mọi thời gian trong tài liệu này là
@@ -38,23 +42,25 @@ Việt để huấn luyện và 100 cặp để kiểm tra.
 
 ---
 
-## 1. Chuẩn bị (Colab, không cần cài gì)
+## 1. Chuẩn bị (Colab hoặc Kaggle, không cần cài gì trên máy)
 
+### Cách A — Google Colab:
 1. Tải file [`colab/Lab22_DPO_T4.ipynb`](colab/Lab22_DPO_T4.ipynb) về máy, rồi mở [Google Colab](https://colab.research.google.com)
    → **Tệp → Tải sổ tay lên** → chọn file vừa tải.
 2. Chọn GPU: **Thời gian chạy → Thay đổi loại thời gian chạy → T4 GPU → Lưu**.
-3. Chạy các cell đầu tiên (phần cài đặt). Chúng đặt cấu hình (cell đầu tiên, gọi là **cell cài đặt**), cài thư
-   viện, tạo thư mục làm việc `/content/lab22` và ghi các file mã nguồn của lab vào đó. Bạn không cần tải repo về.
-4. Chạy lần lượt các cell **từ trên xuống**, không bỏ cell nào. Phần bắt buộc kết thúc ở **NB4**; các phần sau là bonus.
-   Nếu gặp lỗi không có GPU, quay lại bước 2.
+3. Chạy lần lượt các cell **từ trên xuống**.
 
-> **Quan trọng — Colab xoá mọi file khi hết phiên.** Trước khi đóng tab hoặc hết giờ GPU, mở bảng **Tệp**
-> (biểu tượng thư mục bên trái), vào `/content/lab22` và tải về máy:
-> - thư mục `submission/screenshots/` (các ảnh biểu đồ),
-> - thư mục `data/eval/` (kết quả chấm),
-> - các file `.json` trong `adapters/dpo/` (số liệu huấn luyện; **không** cần tải file trọng số `.safetensors`).
->
-> Nếu mất phiên giữa chừng, bạn phải chạy lại từ NB1.
+### Cách B — Kaggle (GPU T4 × 2 miễn phí, 30h/tuần):
+1. Tải file [`kaggle/Lab22_DPO_T4_Kaggle.ipynb`](kaggle/Lab22_DPO_T4_Kaggle.ipynb) (hoặc `colab/Lab22_DPO_T4.ipynb`) về máy.
+2. Mở [Kaggle](https://www.kaggle.com) → **Create → New Notebook** → **File → Import Notebook** → tải file lên.
+3. Cấu hình bên phải (Notebook options):
+   - **Settings → Internet → Bật ON** (bắt buộc để tải thư viện và mô hình Hugging Face).
+   - **Settings → Accelerator → Chọn GPU T4 x 2** (code tự động đặt `CUDA_VISIBLE_DEVICES=0` cho Unsloth).
+4. Chạy lần lượt các cell **từ trên xuống** (hoặc **Run All**).
+
+> **Quan trọng — Tải kết quả về máy:**
+> Ở cuối notebook có cell **"Tải kết quả về nộp bài"**. Chạy cell này để tự động nén `submission_artifacts.zip`
+> và tải về máy (trên Kaggle: file xuất hiện ở panel **Output** bên phải hoặc link tải trực tiếp trong notebook).
 
 Muốn chạy trên laptop/máy chủ có GPU ≥ 12 GB, hoặc dùng A100/L4: xem [`docs/reference.md`](docs/reference.md).
 

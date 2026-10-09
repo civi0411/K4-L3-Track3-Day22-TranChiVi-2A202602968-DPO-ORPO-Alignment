@@ -7,6 +7,10 @@
 # %% [markdown]
 # # NB0 — DPO loss tự cài từ đầu (CPU, ~10 phút)
 #
+# **Học viên:** Trần Chí Vĩ  
+# **Mã học viên:** 2A202602968  
+# **Khoá:** VinUni AICB Track 3 (K4) — Day 22 DPO/ORPO Alignment  
+#
 # **Không cần GPU.** Trước khi gọi `DPOTrainer`, bạn tự viết loss và kiểm tra nó
 # trên số liệu đồ chơi. Phần này lấy từ lab K3 (tự cài DPO) và là nền để đọc
 # đường cong reward ở NB3.
@@ -59,8 +63,10 @@ print(f"sum log p = {total.item():.3f}   mean log p = {mean.item():.3f}")
 # %%
 def my_dpo_loss(pc, pr, rc, rr, beta=0.1):
     """pc/pr: policy log-prob chosen/rejected; rc/rr: reference. Trả về loss trung bình."""
-    # TODO: viết bằng torch.nn.functional.logsigmoid
-    return None
+    chosen_reward = beta * (pc - rc)
+    rejected_reward = beta * (pr - rr)
+    loss = -torch.nn.functional.logsigmoid(chosen_reward - rejected_reward)
+    return loss.mean()
 
 
 # %%
@@ -122,6 +128,28 @@ for name, (pc_, pr_) in scenarios.items():
     print(f"{name:28s} RPO loss {M.rpo_loss(pc_, pr_, ref_c, ref_r, nll, beta=1.0).item():.3f}")
 
 # %% [markdown]
+# ### [Trần Chí Vĩ - 2A202602968] Trả lời câu hỏi Rubric NB0 (4 điểm):
+# **Vì sao margin tăng được trong khi log-xác suất của câu chosen giảm?**
+#
+# 1. **Bản chất toán học của Implicit Reward & Margin:**
+#    Hàm loss của DPO tối ưu hóa trực tiếp dựa trên hiệu số reward ngầm giữa hai câu trả lời:
+#    $$\text{Margin} = r_\theta(x, y_w) - r_\theta(x, y_l) = \beta \left[ \log \frac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)} - \log \frac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)} \right]$$
+#    Viết gọn lại theo độ biến thiên log-prob:
+#    $$\text{Margin} = \beta \Big[ \underbrace{(\log\pi_\theta(y_w|x) - \log\pi_{\text{ref}}(y_w|x))}_{\Delta \log p(w)} - \underbrace{(\log\pi_\theta(y_l|x) - \log\pi_{\text{ref}}(y_l|x))}_{\Delta \log p(l)} \Big]$$
+#    Vì mô hình tham chiếu $\pi_{\text{ref}}$ là cố định, Margin chỉ phụ thuộc vào **hiệu số** $(\log\pi_\theta(y_w|x) - \log\pi_\theta(y_l|x))$, chứ **hoàn toàn không ràng buộc giá trị tuyệt đối** của $\log\pi_\theta(y_w|x)$ phải tăng.
+#    - Khi $\Delta \log p(w) < 0$ (tức là log-xác suất của câu `chosen` giảm), nhưng $\Delta \log p(l) < 0$ và có độ giảm lớn hơn rất nhiều (tức là $\Delta \log p(l) \ll \Delta \log p(w) < 0$), thì hiệu số $[\Delta \log p(w) - \Delta \log p(l)]$ vẫn mang giá trị **dương lớn**!
+#    - Kết quả là $\text{Margin}$ vẫn tăng đều đặn, hàm loss $-\log\sigma(\text{Margin})$ vẫn giảm mượt mà, mặc dù mô hình đang giảm xác suất sinh ra của cả hai câu.
+#
+# 2. **Cơ chế gradient và hiện tượng 'Unlearning':**
+#    - Gradient của DPO tỷ lệ với $\sigma(-\text{Margin})$. Trong không gian xác suất tự hồi quy (autoregressive), việc "dìm" xác suất của câu `rejected` xuống thường dễ hơn nhiều (chỉ cần làm lệch phân bố softmax ở một vài token mấu chốt) so với việc "nâng" xác suất của toàn bộ chuỗi token `chosen` một cách mạch lạc.
+#    - Nếu không có cơ chế neo giữ phân bố gốc (như số hạng Language Modeling / NLL của `chosen`), mô hình có xu hướng chọn con đường dìm câu `rejected` cực mạnh để hạ loss nhanh nhất, kéo theo việc xác suất tổng thể của câu `chosen` cũng bị trôi dốc.
+#
+# 3. **Hệ quả thực tế & Giải pháp:**
+#    - Hiện tượng này gọi là **Likelihood Displacement** (Dịch chuyển xác suất). Nó làm tăng margin giả tạo nhưng có thể gây suy giảm chất lượng sinh văn bản thực tế (*mode collapse* hoặc câu trả lời bị cộc lốc/kém tự nhiên).
+#    - Do đó, quan sát đường cong reward bắt buộc phải tách riêng `rewards/chosen` và `rewards/rejected` (như thực hiện tại NB3).
+#    - Để khắc phục, **RPO** (Regularized Preference Optimization) bổ sung số hạng $-\alpha \log \pi_\theta(y_w|x)$ để phạt nếu xác suất của câu `chosen` bị kéo tụt, buộc mô hình phải duy trì năng lực sinh câu tốt.
+
+# %% [markdown]
 # ## 6. Bốn biến thể trên cùng một cặp
 #
 # | Loss | Cần mô hình tham chiếu (reference)? | Chuẩn hoá độ dài? | Ghi chú |
@@ -148,3 +176,14 @@ print(f"ORPO  {M.orpo_loss(avg_c, avg_r, -avg_c).item():.4f}")
 # **Câu hỏi cho REFLECTION §3:** tổng log-prob của câu dài luôn âm hơn câu ngắn.
 # Vì sao điều đó khiến DPO gốc dễ thiên vị độ dài, và SimPO/ORPO xử lý bằng cách nào?
 # Gợi ý: NB2 in ra tỉ lệ cặp có chosen dài hơn rejected trong dữ liệu tiếng Việt.
+#
+# ### [Trần Chí Vĩ - 2A202602968] Trả lời phân tích:
+# 1. **Nguyên nhân DPO gốc dễ thiên vị độ dài:**
+#    - Về mặt xác suất, tổng log-prob của một câu phản hồi là: $\log \pi(y|x) = \sum_{t=1}^{|y|} \log \pi(y_t | x, y_{<t})$.
+#    - Do xác suất điều kiện tại mỗi token $\pi(y_t) \le 1$ nên $\log \pi(y_t) \le 0$. Do đó, một câu càng dài ($|y|$ lớn) thì tổng log-prob càng âm sâu (độ lớn tuyệt đối càng lớn).
+#    - Trong dữ liệu sở thích (cụ thể ở NB2, tỉ lệ câu `chosen` dài hơn `rejected` chiếm tới **65.9%**), độ chênh lệch tuyệt đối của tổng log-prob giữa hai câu dài thường lớn hơn nhiều so với hai câu ngắn.
+#    - Do hàm loss DPO truyền thống lấy trực tiếp hiệu số tổng log-prob mà không chia cho độ dài $|y|$, gradient cập nhật sẽ bị chi phối mạnh mẽ bởi các mẫu có câu trả lời dài. Hệ quả là mô hình học được xu hướng "ăn gian độ dài" (length hack / verbosity bias): chỉ cần nói dài dòng hơn là implicit reward tự động tăng lên.
+#
+# 2. **Cơ chế xử lý triệt để của SimPO và ORPO:**
+#    - **SimPO (Simple Preference Optimization):** Sử dụng hàm mục tiêu dựa trên **log-probability trung bình trên từng token**: $\frac{1}{|y|} \sum_{t=1}^{|y|} \log \pi(y_t | x, y_{<t})$. Phép chuẩn hóa này tước bỏ hoàn toàn lợi thế cộng dồn theo chiều dài câu, đưa hai câu ngắn và dài về cùng một thước đo chuẩn. Đồng thời, SimPO đưa vào margin cố định $\gamma$ để đảm bảo độ tách biệt mong muốn mà không cần tới Reference Model.
+#    - **ORPO (Odds Ratio Preference Optimization):** Sử dụng log-odds-ratio giữa `chosen` và `rejected` được tính toán dựa trên xác suất trung bình trên mỗi token, kết hợp cùng SFT loss trong một pha huấn luyện duy nhất. Nhờ vậy, ORPO vừa bảo tồn chất lượng sinh văn bản, vừa loại bỏ hiện tượng thiên vị độ dài mà lại tiết kiệm tối đa VRAM GPU.

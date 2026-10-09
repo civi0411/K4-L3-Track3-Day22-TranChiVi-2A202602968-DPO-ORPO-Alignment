@@ -1,0 +1,8 @@
+{
+  "beta": 0.05,
+  "eval_reward_gap": 0.142,
+  "eval_chosen_reward": 0.312,
+  "eval_rejected_reward": 0.17,
+  "eval_reward_accuracy": 0.635,
+  "diagnosis": "LIKELIHOOD DISPLACEMENT"
+}
